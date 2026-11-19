@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lern-App: Kräfte (NT 6)</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#1d2433;--mute:#5b6577;--pri:#2f6fdb;--ok:#1f9d55;--bad:#d64545;--warn:#f2a900}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:18px;line-height:1.45}
+header{background:var(--pri);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:24px}
+header p{margin:4px 0 0;opacity:.9;font-size:15px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;background:#fff;border-bottom:1px solid #dde3ee;position:sticky;top:0;z-index:5}
+nav button{border:0;background:#e8eefb;color:var(--pri);padding:10px 14px;border-radius:999px;font-size:16px;font-weight:600;cursor:pointer}
+nav button.on{background:var(--pri);color:#fff}
+main{max-width:820px;margin:0 auto;padding:18px 16px 60px}
+.card{background:var(--card);border-radius:16px;padding:18px 20px;margin:0 0 16px;box-shadow:0 2px 8px rgba(30,40,70,.07)}
+h2{margin:0 0 10px;font-size:21px}
+h3{margin:14px 0 6px;font-size:18px}
+.merke{background:#fff7dc;border-left:6px solid var(--warn);padding:10px 14px;border-radius:8px;margin:10px 0}
+.btn{border:0;background:var(--pri);color:#fff;padding:12px 18px;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer}
+.btn.sec{background:#e8eefb;color:var(--pri)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.opt{display:block;width:100%;text-align:left;border:2px solid #d6ddea;background:#fff;padding:12px 14px;border-radius:12px;margin:8px 0;font-size:17px;cursor:pointer}
+.opt.right{border-color:var(--ok);background:#e6f6ec}
+.opt.wrong{border-color:var(--bad);background:#fdeaea}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px}
+.fb.ok{background:#e6f6ec}.fb.no{background:#fdeaea}
+.flash{min-height:200px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:22px;cursor:pointer;border:2px dashed #c9d3e6;user-select:none}
+.flash.back{background:#eef4ff;border-style:solid;border-color:var(--pri)}
+.bar{height:10px;background:#e3e8f2;border-radius:99px;overflow:hidden;margin:8px 0 14px}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+select,input[type=text],input[type=number]{font-size:17px;padding:8px 10px;border:2px solid #d6ddea;border-radius:10px}
+input.ok{border-color:var(--ok);background:#e6f6ec} input.no{border-color:var(--bad);background:#fdeaea}
+.gap{width:150px}
+.check label{display:flex;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid #eef1f6;font-size:17px}
+.check input{width:24px;height:24px}
+.pill{display:inline-block;background:#e8eefb;color:var(--pri);border-radius:99px;padding:2px 10px;font-size:14px;font-weight:600}
+small{color:var(--mute)}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:12px 0}
+figure{margin:0;background:#f7f9fd;border-radius:12px;padding:8px;text-align:center;cursor:zoom-in}
+figure img{width:100%;height:150px;object-fit:contain}
+figcaption{font-size:14px;color:var(--mute)}
+#zoom{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+#zoom img{max-width:100%;max-height:100%;background:#fff;border-radius:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚡ Kräfte – Fit für die Probe</h1>
+  <p>Natur und Technik 6 · Buch S. 136–145 · Zusammenfassung S. 158</p>
+</header>
+<nav id="nav">
+  <button data-v="wissen" class="on">📘 Wissen</button>
+  <button data-v="karten">🃏 Lernkarten</button>
+  <button data-v="quiz">✅ Quiz</button>
+  <button data-v="luecke">✏️ Lückentext</button>
+  <button data-v="rechnen">🌙 Rechnen</button>
+  <button data-v="karte">🗺️ Lernlandkarte</button>
+</nav>
+<main id="app"></main>
+<div id="zoom"><img alt=""></div>
+
+<script>
+// ---------- Inhalte ----------
+const WISSEN = [
+ {t:"1 · Was bewirken Kräfte?", s:"S. 136/137", html:`
+  <p><b>Alltag:</b> „Ich habe viel Kraft“ heißt: Ich bin stark.<br><b>Physik:</b> Eine Kraft kann man nicht sehen. Man erkennt sie an ihrer <b>Wirkung</b>.</p>
+  <div class="gal"><figure><img src="img/s1_image2.jpg" alt="schneller werden" loading="lazy"><figcaption>schneller werden</figcaption></figure><figure><img src="img/s1_image1.jpg" alt="langsamer werden" loading="lazy"><figcaption>langsamer werden</figcaption></figure><figure><img src="img/s1_image3.jpg" alt="umlenken" loading="lazy"><figcaption>umlenken</figcaption></figure><figure><img src="img/s1_image4.jpg" alt="verformen" loading="lazy"><figcaption>verformen</figcaption></figure></div><h3>Ein Gegenstand …</h3>
+  <ul><li>wird <b>schneller</b> (beschleunigt) oder <b>langsamer</b> (verzögert)</li>
+  <li>wird <b>umgelenkt</b> (Richtung ändert sich)</li>
+  <li>wird <b>verformt</b> (Form ändert sich)</li></ul>
+  <div class="merke"><b>Merke:</b> Für eine Kraft braucht man immer <b>zwei Gegenstände</b>: Einer übt die Kraft auf den anderen aus. (z. B. Fuß → Ball, Erde → Apfel)</div>`},
+ {t:"2 · Wie lassen sich Kräfte messen?", s:"S. 138–140", html:`
+  <p>Im <b>Kraftmesser</b> steckt eine <b>Schraubenfeder</b>. Je größer die Kraft, desto weiter wird die Feder gedehnt: <b>doppelte Kraft → doppelte Verlängerung</b>.</p>
+  <p>Teile: Haken · Skala · Schraubenfeder · Nullpunktschieber</p>
+  <div class="gal"><figure><img src="img/s2_image1.jpg" alt="Dehnung einer Schraubenfeder" loading="lazy"><figcaption>Dehnung einer Schraubenfeder</figcaption></figure><figure><img src="img/s2_image4.jpg" alt="Aufbau eines Kraftmessers" loading="lazy"><figcaption>Aufbau eines Kraftmessers</figcaption></figure><figure><img src="img/s2_image2.jpg" alt="100 g → 1 N" loading="lazy"><figcaption>100 g → 1 N</figcaption></figure></div><h3>Einheit</h3>
+  <p>Kräfte misst man in <b>Newton (N)</b>. 1 N braucht man, um eine <b>100-g-Tafel Schokolade</b> hochzuheben. Große Kräfte: <b>1 kN = 1000 N</b>.</p>
+  <h3>So misst du richtig</h3>
+  <ol><li><b>Auswählen:</b> Kraftmesser mit passendem Messbereich</li><li><b>Auf null stellen:</b> ohne Last den Nullpunktschieber auf 0</li><li><b>Messen:</b> Gegenstand einhängen, ruhig halten</li><li><b>Ablesen:</b> Augen auf Höhe der Skala</li></ol>
+  <div class="gal"><figure><img src="img/s2_image3.jpg" alt="Kraftpfeil und Angriffspunkt" loading="lazy"><figcaption>Kraftpfeil und Angriffspunkt</figcaption></figure></div><h3>Kraftpfeil</h3>
+  <p>Beginnt am <b>Angriffspunkt</b>, die Spitze zeigt die <b>Richtung</b>, die Länge zeigt die <b>Größe</b>.</p>
+  <div class="merke"><b>Merke:</b> Kräfte misst man mit dem Kraftmesser. Die Einheit ist 1 Newton (1 N). Ein Kraftpfeil zeigt Angriffspunkt, Richtung und Größe einer Kraft.</div>`},
+ {t:"3 · Auf dem Mond ist alles leichter", s:"S. 142/143", html:`
+  <p><b>Masse</b> = wie viel Stoff in einem Gegenstand steckt, gemessen in <b>Kilogramm (kg)</b>. 1 kg Zucker hat auf der Erde und auf dem Mond 1 kg.</p>
+  <p><b>Gewichtskraft</b> = die Kraft, mit der die Erde (oder der Mond) Gegenstände anzieht, gemessen in <b>Newton (N)</b>.</p>
+  <p>Der Mond hat eine viel kleinere Masse als die Erde → er zieht schwächer an. Die Gewichtskraft ist dort etwa <b>6-mal kleiner</b>.</p>
+  <div class="gal"><figure><img src="img/s3_image1.jpg" alt="Astronaut auf dem Mond" loading="lazy"><figcaption>Astronaut auf dem Mond</figcaption></figure><figure><img src="img/s3_image2.jpg" alt="1 kg Zucker auf der Erde: 10 N" loading="lazy"><figcaption>1 kg Zucker auf der Erde: 10 N</figcaption></figure><figure><img src="img/s3_image3.jpg" alt="1 kg Zucker auf dem Mond: 1,6 N" loading="lazy"><figcaption>1 kg Zucker auf dem Mond: 1,6 N</figcaption></figure></div><p><span class="pill">Erde</span> 1 kg → rund 10 N &nbsp; <span class="pill">Mond</span> 1 kg → 1,6 N</p>
+  <div class="merke"><b>Merke:</b> Die Masse ist an allen Orten gleich groß. Die Gewichtskraft hängt vom Ort ab. Darum kann der Astronaut seine 163 kg Ausrüstung auf dem Mond tragen und sogar hüpfen.</div>`},
+ {t:"4 · Isaac Newton", s:"S. 142/143", html:`
+  <ul><li>geboren am <b>4. Januar 1643</b> in Woolsthorpe (England), aufgewachsen bei der Großmutter</li>
+  <li>ab 1661 Studium am <b>Trinity College in Cambridge</b>, später Professor für Mathematik</li>
+  <li>berühmter <b>Naturforscher</b>, gestorben <b>1727</b> in London</li></ul>
+  <div class="gal"><figure><img src="img/s4_image2.jpg" alt="Newton und der Apfel" loading="lazy"><figcaption>Newton und der Apfel</figcaption></figure><figure><img src="img/s4_image1.jpg" alt="„Unten“ ist überall Richtung Erdmittelpunkt" loading="lazy"><figcaption>„Unten“ ist überall Richtung Erdmittelpunkt</figcaption></figure></div><p>Berühmte Geschichte: Ein Apfel fällt ins Gras – Newton fragt sich: <i>Warum fällt der Apfel auf die Erde, der Mond aber nicht?</i></p>
+  <p>„Unten“ ist immer die Richtung zum Erdmittelpunkt. Der Mond fällt nicht herunter, weil er sich sehr schnell um die Erde bewegt.</p>
+  <div class="merke"><b>Merke:</b> Jeder Gegenstand zieht jeden anderen Gegenstand an. Die Anziehung ist umso größer, je größer die Masse der Gegenstände ist. Der Stoff ist dabei egal.</div>`},
+ {t:"5 · Reibungskraft", s:"S. 144/145", html:`
+  <p>Keine Oberfläche ist ganz glatt – überall gibt es kleine <b>Unebenheiten</b>. Bewegt man zwei Gegenstände gegeneinander, reiben sie aneinander: Es entstehen <b>Reibungskräfte</b>, die die Bewegung <b>bremsen</b>.</p>
+  <div class="gal"><figure><img src="img/s5_image3.jpg" alt="Gummireifen, 300-fach vergrößert" loading="lazy"><figcaption>Gummireifen, 300-fach vergrößert</figcaption></figure><figure><img src="img/s5_image1.jpg" alt="Reifen und Straßenbelag greifen ineinander" loading="lazy"><figcaption>Reifen und Straßenbelag greifen ineinander</figcaption></figure><figure><img src="img/s5_image2.jpg" alt="Glatte Straße: kaum Reibung" loading="lazy"><figcaption>Glatte Straße: kaum Reibung</figcaption></figure></div><ul><li>Beim Anfahren haften die Reifen auf der Straße → das Auto rutscht nicht weg.</li>
+  <li>Gutes <b>Reifenprofil</b> hilft beim Fahren und Bremsen.</li>
+  <li>Auf <b>Eis</b> sind die Reibungskräfte sehr klein → Rutschgefahr, Unfälle.</li>
+  <li>Zu große Reibung → das Auto braucht <b>mehr Treibstoff</b>.</li></ul>
+  <div class="merke"><b>Merke:</b> Wenn ein Gegenstand gegen einen anderen verschoben wird, treten Reibungskräfte auf. Je rauer die Oberflächen, desto größer die Reibungskräfte.</div>`}
+];
+
+const KARTEN = [
+ ["Woran erkennt man eine physikalische Kraft?","An ihrer Wirkung."],
+ ["Nenne die drei Wirkungen von Kräften.","Schneller/langsamer werden · umgelenkt werden · verformt werden"],
+ ["Wie viele Gegenstände braucht man für eine Kraft?","Immer zwei: Einer übt die Kraft auf den anderen aus."],
+ ["Was bedeutet „Kraft“ im Alltag?","Dass jemand stark ist („Ich habe viel Kraft“)."],
+ ["Womit misst man Kräfte?","Mit dem Kraftmesser (darin: eine Schraubenfeder)."],
+ ["Einheit der Kraft?","1 Newton (1 N)"],
+ ["Wie viel ist 1 kN?","1 kN = 1000 N"],
+ ["Wofür braucht man ungefähr 1 N?","Zum Hochheben einer 100-g-Tafel Schokolade."],
+ ["Doppelte Kraft am Kraftmesser bedeutet …","… doppelte Verlängerung der Feder."],
+ ["Die 4 Schritte beim Messen?","Auswählen – auf null stellen – messen – ablesen (Augen auf Skalenhöhe)"],
+ ["Was zeigt ein Kraftpfeil?","Angriffspunkt, Richtung und Größe der Kraft."],
+ ["Was ist die Masse?","Wie viel Stoff in einem Gegenstand steckt. Einheit: kg. Überall gleich."],
+ ["Was ist die Gewichtskraft?","Die Kraft, mit der die Erde (oder der Mond) einen Gegenstand anzieht. Einheit: N. Hängt vom Ort ab."],
+ ["Gewichtskraft von 1 kg auf der Erde / auf dem Mond?","Erde: rund 10 N · Mond: 1,6 N"],
+ ["Warum ist auf dem Mond alles leichter?","Der Mond hat eine kleinere Masse als die Erde und zieht Gegenstände deshalb schwächer an (ca. 6-mal kleiner)."],
+ ["Wann und wo wurde Isaac Newton geboren?","Am 4. Januar 1643 in Woolsthorpe (England)."],
+ ["Wo studierte Newton?","Am Trinity College in Cambridge."],
+ ["Was entdeckte Newton?","Jeder Gegenstand zieht jeden anderen an – je größer die Masse, desto stärker."],
+ ["Warum fällt der Mond nicht auf die Erde?","Weil er sich sehr schnell um die Erde bewegt."],
+ ["Zieht der Mond auch die Erde an?","Ja! Jeder Gegenstand zieht jeden anderen an – nur schwächer, weil der Mond weniger Masse hat."],
+ ["Wie entstehen Reibungskräfte?","Die Unebenheiten zweier Oberflächen reiben aneinander und bremsen die Bewegung."],
+ ["Wann sind Reibungskräfte groß?","Je rauer die Oberflächen, desto größer."],
+ ["Warum rutscht ein Auto beim Anfahren nicht weg?","Reibungskräfte zwischen Reifen und Straße – die Reifen haften."],
+ ["Warum ist Eis gefährlich?","Sehr kleine Reibungskräfte – man rutscht, kann schlecht bremsen und lenken."],
+ ["Nachteil von zu großer Reibung beim Auto?","Es braucht mehr Treibstoff."]
+];
+
+const QUIZ = [
+ {q:"Woran erkennt man eine physikalische Kraft?",o:["An ihrer Farbe","An ihrer Wirkung","Man kann sie direkt sehen","An ihrem Gewicht"],a:1,e:"Kräfte kann man nicht sehen – man erkennt sie an ihrer Wirkung."},
+ {q:"Welche ist KEINE Wirkung einer Kraft?",o:["Ein Ball wird schneller","Ein Ball wird umgelenkt","Ein Ball wird verformt","Ein Ball wechselt die Farbe"],a:3,e:"Kräfte beschleunigen/verzögern, lenken um oder verformen."},
+ {q:"Ein Torwart fängt den Ball. Welche Wirkung hat die Kraft?",o:["Der Ball wird langsamer","Der Ball wird schneller","Der Ball wird umgelenkt","Keine Wirkung"],a:0,e:"Der Ball wird abgebremst (verzögert)."},
+ {q:"Ein Kopfball ändert die Flugbahn. Das ist …",o:["Verformen","Umlenken","Beschleunigen","Messen"],a:1,e:"Die Richtung ändert sich → umlenken."},
+ {q:"Du drückst Knete zusammen. Die Kraft …",o:["lenkt um","verformt","bremst","misst"],a:1,e:"Die Form ändert sich → verformen."},
+ {q:"Wie viele Gegenstände braucht man für eine physikalische Kraft?",o:["Einen","Zwei","Drei","Keinen"],a:1,e:"Immer zwei: Einer übt die Kraft auf den anderen aus."},
+ {q:"„Ich habe viel Kraft!“ – welcher Kraftbegriff ist das?",o:["Physikalischer Kraftbegriff","Alltagsbegriff","Gewichtskraft","Reibungskraft"],a:1,e:"Im Alltag meint man damit: Ich bin stark."},
+ {q:"Was steckt in einem Kraftmesser?",o:["Ein Magnet","Eine Schraubenfeder","Eine Batterie","Ein Gummiball"],a:1,e:"Die Dehnung der Schraubenfeder ist ein Maß für die Kraft."},
+ {q:"In welcher Einheit misst man Kräfte?",o:["Kilogramm (kg)","Meter (m)","Newton (N)","Liter (l)"],a:2,e:"Die Einheit der Kraft ist 1 Newton."},
+ {q:"Wie viel Kraft brauchst du ungefähr für eine 100-g-Tafel Schokolade?",o:["1 N","10 N","100 N","1 kN"],a:0,e:"Etwa 1 N."},
+ {q:"1 kN sind …",o:["10 N","100 N","1000 N","1 N"],a:2,e:"k = Kilo = 1000."},
+ {q:"Die Kraft am Kraftmesser wird verdreifacht. Die Feder wird …",o:["gleich lang","doppelt so weit gedehnt","dreimal so weit gedehnt","kürzer"],a:2,e:"3-fache Kraft → 3-fache Verlängerung."},
+ {q:"Was machst du als ERSTES beim Messen?",o:["Ablesen","Passenden Kraftmesser auswählen","Gegenstand einhängen","Auf null stellen"],a:1,e:"Reihenfolge: auswählen – auf null stellen – messen – ablesen."},
+ {q:"Warum wählt man einen Kraftmesser mit passendem Messbereich?",o:["Weil er schöner aussieht","Zu große Kräfte machen die Feder kaputt","Damit er leichter ist","Das ist egal"],a:1,e:"Zu große Kraft beschädigt die Feder, ein zu großer Messbereich ist ungenau."},
+ {q:"Was zeigt die LÄNGE eines Kraftpfeils?",o:["Die Richtung","Den Angriffspunkt","Die Größe der Kraft","Die Masse"],a:2,e:"Länger = größere Kraft."},
+ {q:"Wo beginnt ein Kraftpfeil?",o:["An der Spitze","Am Angriffspunkt","Irgendwo","In der Mitte"],a:1,e:"Er beginnt dort, wo die Kraft angreift."},
+ {q:"1 cm entspricht 1 N. Wie lang ist der Pfeil für 4 N?",o:["1 cm","2 cm","4 cm","40 cm"],a:2,e:"4 N → 4 cm."},
+ {q:"Was gilt für die Masse eines Gegenstandes?",o:["Sie ist auf dem Mond kleiner","Sie ist überall gleich","Sie wird in Newton gemessen","Sie hängt vom Wetter ab"],a:1,e:"Die Masse ist an allen Orten gleich groß (Einheit kg)."},
+ {q:"Was gilt für die Gewichtskraft?",o:["Sie ist überall gleich","Sie hängt vom Ort ab","Sie wird in kg gemessen","Es gibt sie nur auf der Erde"],a:1,e:"Auf dem Mond ist sie etwa 6-mal kleiner."},
+ {q:"Welche Masse hat 1 kg Zucker auf dem Mond?",o:["1 kg","0,16 kg","6 kg","10 kg"],a:0,e:"Die Masse ändert sich nicht."},
+ {q:"Wie groß ist die Gewichtskraft auf 1 kg auf dem Mond?",o:["10 N","1,6 N","16 N","0 N"],a:1,e:"Mond: 1,6 N pro kg."},
+ {q:"Warum ist die Gewichtskraft auf dem Mond kleiner?",o:["Dort gibt es keine Luft","Der Mond hat eine kleinere Masse als die Erde","Es ist dort kalt","Der Mond dreht sich nicht"],a:1,e:"Kleinere Masse → schwächere Anziehung."},
+ {q:"Wann wurde Isaac Newton geboren?",o:["1543","1643","1743","1843"],a:1,e:"4. Januar 1643."},
+ {q:"Wo studierte Isaac Newton?",o:["In Oxford","In London","Am Trinity College in Cambridge","In München"],a:2,e:"Ab 1661 am Trinity College in Cambridge."},
+ {q:"Was hat Newton entdeckt?",o:["Jeder Gegenstand zieht jeden anderen an","Nur die Erde zieht an","Äpfel sind schwerer als der Mond","Reibung entsteht nur auf Eis"],a:0,e:"Je größer die Masse, desto stärker die Anziehung."},
+ {q:"Warum fällt der Mond nicht auf die Erde?",o:["Die Erde zieht ihn nicht an","Er bewegt sich sehr schnell um die Erde","Er ist zu leicht","Er ist aus Stein"],a:1,e:"Die Erde zieht ihn an – aber er bewegt sich sehr schnell um sie herum."},
+ {q:"„Der Apfel zieht auch die Erde an.“ Stimmt das?",o:["Ja, aber nur ganz schwach","Nein, nie","Nur nachts","Nur auf dem Mond"],a:0,e:"Jeder Gegenstand zieht jeden anderen an – der Apfel hat nur sehr wenig Masse."},
+ {q:"Wie entstehen Reibungskräfte?",o:["Durch Magnetismus","Unebenheiten der Oberflächen reiben aneinander","Durch Licht","Nur durch Wasser"],a:1,e:"Keine Oberfläche ist ganz glatt."},
+ {q:"Wann sind die Reibungskräfte am größten?",o:["Bei glatten Oberflächen","Bei rauen Oberflächen","Auf Eis","Im Weltall"],a:1,e:"Je rauer, desto größer die Reibung."},
+ {q:"Warum kommt es bei Glatteis zu Unfällen?",o:["Die Reibungskräfte sind sehr klein","Die Reibungskräfte sind sehr groß","Die Autos sind schwerer","Die Gewichtskraft fehlt"],a:0,e:"Reifen haften kaum → rutschen, schlecht bremsen und lenken."},
+ {q:"Was passiert, wenn die Reibung beim Auto zu groß ist?",o:["Es fährt schneller","Es braucht mehr Treibstoff","Es rutscht weg","Nichts"],a:1,e:"Zu große Reibung kostet Treibstoff."},
+ {q:"Warum sind gute Reifen mit Profil wichtig?",o:["Sie sehen gut aus","Sie haften gut – kurzer Bremsweg, kein Wegrutschen","Sie sind leichter","Sie verringern die Masse"],a:1,e:"Gute Haftung durch Reibung verhindert Unfälle."}
+];
+
+const LUECKEN = [
+ ["Physikalische Kräfte erkennt man an ihren ___.",["wirkungen","wirkung"]],
+ ["Eine Kraft kann einen Gegenstand schneller, langsamer, umlenken oder ___.",["verformen"]],
+ ["Für eine Kraft braucht man immer ___ Gegenstände.",["zwei","2"]],
+ ["Kräfte misst man mit dem ___.",["kraftmesser"]],
+ ["Im Kraftmesser wird eine ___ gedehnt.",["schraubenfeder","feder"]],
+ ["Die Einheit der Kraft ist 1 ___.",["newton","n"]],
+ ["1 kN = ___ N",["1000","1.000"]],
+ ["Ein Kraftpfeil zeigt Angriffspunkt, ___ und Größe der Kraft.",["richtung"]],
+ ["Die ___ ist an allen Orten gleich groß.",["masse"]],
+ ["Die ___ hängt vom Ort ab.",["gewichtskraft"]],
+ ["Auf dem Mond ist die Gewichtskraft etwa ___-mal kleiner als auf der Erde.",["6","sechs"]],
+ ["Isaac Newton wurde im Jahr ___ geboren.",["1643"]],
+ ["Jeder Gegenstand ___ jeden anderen Gegenstand an.",["zieht"]],
+ ["Je rauer die Oberflächen, desto ___ sind die Reibungskräfte.",["größer","groesser","grösser"]],
+ ["Auf Eis sind die Reibungskräfte sehr ___.",["klein","gering"]]
+];
+
+const KARTE = ["Ich kann zwischen dem Begriff Kraft im Alltag und der physikalischen Kraft unterscheiden","Ich kann erklären, wie Kräfte wirken","Ich kann Kräfte messen","Ich kenne die Einheit 1 Newton","Ich kann erklären, wieso auf dem Mond alles leichter ist","Ich weiß, wer Isaac Newton war","Ich weiß, was die Reibungskraft ist"];
+
+// ---------- Hilfen ----------
+const $=s=>document.querySelector(s), app=$("#app");
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const store={get(k,d){try{return JSON.parse(localStorage.getItem("kraft_"+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem("kraft_"+k,JSON.stringify(v))}catch(e){}}};
+const norm=s=>s.trim().toLowerCase().replace(/\s+/g,"");
+
+// ---------- Ansichten ----------
+const V={};
+V.wissen=()=>{app.innerHTML=`<div class="card"><small>Tippe ein Thema an, um es aufzuklappen.</small></div>`+WISSEN.map((w,i)=>`<details class="card" ${i==0?"open":""}><summary><b>${w.t}</b> <span class="pill">${w.s}</span></summary>${w.html}</details>`).join("")};
+
+V.karten=()=>{let deck=shuffle(KARTEN),i=0,back=false,known=0;
+ const draw=()=>{if(i>=deck.length){app.innerHTML=`<div class="card"><h2>Fertig! 🎉</h2><p>Gewusst: <b>${known}</b> von ${deck.length}</p><button class="btn" id="re">Nochmal</button></div>`;$("#re").onclick=V.karten;return}
+  const c=deck[i];app.innerHTML=`<div class="card"><div class="row"><b>Karte ${i+1} / ${deck.length}</b></div><div class="bar"><i style="width:${i/deck.length*100}%"></i></div>
+  <div class="card flash ${back?"back":""}" id="f">${back?c[1]:c[0]}</div><p style="text-align:center"><small>${back?"Hast du es gewusst?":"Tippe auf die Karte zum Umdrehen"}</small></p>
+  ${back?`<div class="row" style="justify-content:center"><button class="btn sec" id="no">🔁 Noch üben</button><button class="btn" id="yes">👍 Gewusst</button></div>`:""}</div>`;
+  $("#f").onclick=()=>{back=!back;draw()};
+  if(back){$("#yes").onclick=()=>{known++;i++;back=false;draw()};$("#no").onclick=()=>{deck.push(c);i++;back=false;draw()}}};
+ draw()};
+
+V.quiz=()=>{const qs=shuffle(QUIZ).slice(0,15);let i=0,pts=0;
+ const draw=()=>{if(i>=qs.length){const best=Math.max(store.get("best",0),pts);store.set("best",best);
+   app.innerHTML=`<div class="card"><h2>Ergebnis</h2><p style="font-size:28px"><b>${pts} / ${qs.length}</b> richtig</p><p>${pts>=13?"Super, du bist bereit! 🌟":pts>=9?"Gut! Wiederhole noch die Lernkarten. 💪":"Lies nochmal im Wissen-Bereich nach und probier es erneut. 📘"}</p><small>Bester Versuch: ${best} / 15</small><p><button class="btn" id="re">Neues Quiz</button></p></div>`;$("#re").onclick=V.quiz;return}
+  const q=qs[i],order=shuffle(q.o.map((t,k)=>k));
+  app.innerHTML=`<div class="card"><b>Frage ${i+1} / ${qs.length}</b> · <small>${pts} richtig</small><div class="bar"><i style="width:${i/qs.length*100}%"></i></div><h2>${q.q}</h2>${order.map(k=>`<button class="opt" data-k="${k}">${q.o[k]}</button>`).join("")}<div id="fb"></div></div>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const k=+b.dataset.k;app.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.k===q.a)x.classList.add("right")});
+   if(k===q.a)pts++;else b.classList.add("wrong");
+   $("#fb").innerHTML=`<div class="fb ${k===q.a?"ok":"no"}">${k===q.a?"✔ Richtig! ":"✘ Leider falsch. "}${q.e}</div><p><button class="btn" id="nx">Weiter →</button></p>`;$("#nx").onclick=()=>{i++;draw()}})};
+ draw()};
+
+V.luecke=()=>{const L=shuffle(LUECKEN);
+ app.innerHTML=`<div class="card"><h2>Fülle die Lücken</h2><small>Schreib das fehlende Wort und tippe dann auf „Prüfen“.</small></div><div class="card">`+L.map((l,i)=>`<p>${l[0].replace("___",`<input type="text" class="gap" data-i="${i}" autocapitalize="off" autocomplete="off">`)}</p>`).join("")+`<div class="row"><button class="btn" id="chk">Prüfen</button><button class="btn sec" id="sol">Lösung zeigen</button><button class="btn sec" id="re">Neu mischen</button></div><div id="res"></div></div>`;
+ const ins=[...app.querySelectorAll(".gap")];
+ $("#chk").onclick=()=>{let r=0;ins.forEach(x=>{const ok=L[x.dataset.i][1].includes(norm(x.value));x.className="gap "+(ok?"ok":"no");if(ok)r++});$("#res").innerHTML=`<div class="fb ${r==L.length?"ok":"no"}">${r} von ${L.length} richtig.</div>`};
+ $("#sol").onclick=()=>ins.forEach(x=>{const w=L[x.dataset.i][1][0];x.value=w.charAt(0).toUpperCase()+w.slice(1);x.className="gap"});
+ $("#re").onclick=V.luecke};
+
+V.rechnen=()=>{let n=0,r=0;
+ const make=()=>{const kg=[1,2,3,4,5,8,10,20,50,100][Math.floor(Math.random()*10)],ort=Math.random()<.5?"Erde":"Mond",f=ort=="Erde"?10:1.6;
+  return{kg,ort,ans:Math.round(kg*f*10)/10,f}};
+ let t=make();
+ const draw=()=>{app.innerHTML=`<div class="card"><h2>🌙 Gewichtskraft berechnen</h2><div class="merke">Erde: 1 kg → rund <b>10 N</b> &nbsp;·&nbsp; Mond: 1 kg → <b>1,6 N</b><br><small>Beispiel: 10 kg auf dem Mond → 10 × 1,6 N = 16 N</small></div>
+  <p><small>${r} von ${n} richtig</small></p><h3>Wie groß ist die Gewichtskraft auf <b>${t.kg} kg</b> auf ${t.ort=="Erde"?"der <b>Erde</b> 🌍":"dem <b>Mond</b> 🌙"}?</h3>
+  <div class="row"><input type="text" inputmode="decimal" id="a" style="width:140px"> <b>N</b><button class="btn" id="go">Prüfen</button></div><div id="fb"></div></div>
+  <div class="card"><h3>Denk-Aufgabe</h3><p>Ein Astronaut hat 163 kg Ausrüstung. Wie groß ist die Gewichtskraft darauf auf dem Mond?</p><details><summary>Lösung anzeigen</summary><p>163 × 1,6 N = <b>260,8 N</b> (auf der Erde: rund 1630 N). Die Masse bleibt 163 kg!</p></details></div>`;
+  $("#a").focus();
+  const go=()=>{const v=parseFloat($("#a").value.replace(",","."));if(isNaN(v))return;n++;const ok=Math.abs(v-t.ans)<0.05;if(ok)r++;
+   $("#fb").innerHTML=`<div class="fb ${ok?"ok":"no"}">${ok?"✔ Richtig!":"✘ Nicht ganz."} ${t.kg} × ${String(t.f).replace(".",",")} N = <b>${String(t.ans).replace(".",",")} N</b></div><p><button class="btn" id="nx">Nächste Aufgabe →</button></p>`;
+   $("#go").disabled=true;$("#nx").onclick=()=>{t=make();draw()}};
+  $("#go").onclick=go;$("#a").onkeydown=e=>{if(e.key=="Enter")go()}};
+ draw()};
+
+V.karte=()=>{const s=store.get("karte",{});
+ app.innerHTML=`<div class="card"><h2>🗺️ Meine Lernlandkarte</h2><p><small>Hake ab, was du schon sicher kannst. Was noch fehlt: im Wissen-Bereich nachlesen!</small></p><div class="bar"><i id="pb"></i></div><div class="check">`+KARTE.map((k,i)=>`<label><input type="checkbox" data-i="${i}" ${s[i]?"checked":""}>${k}</label>`).join("")+`</div><p id="msg"></p></div>`;
+ const upd=()=>{const c=Object.values(s).filter(Boolean).length;$("#pb").style.width=c/KARTE.length*100+"%";$("#msg").innerHTML=c==KARTE.length?"🎉 Alles abgehakt – viel Erfolg bei der Probe!":`${c} von ${KARTE.length} Zielen geschafft.`};
+ app.querySelectorAll("input").forEach(x=>x.onchange=()=>{s[x.dataset.i]=x.checked;store.set("karte",s);upd()});upd()};
+
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));b.classList.add("on");V[b.dataset.v]();window.scrollTo(0,0)});
+V.wissen();
+app.addEventListener('click',e=>{const f=e.target.closest('figure');if(!f)return;const z=$('#zoom');z.querySelector('img').src=f.querySelector('img').src;z.style.display='flex'});
+$('#zoom').onclick=()=>$('#zoom').style.display='none';
+</script>
+</body>
+</html>
